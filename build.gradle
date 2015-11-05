@@ -1,0 +1,38 @@
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply from: 'maven.gradle'
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+}
+
+jar {
+	baseName "$artifactId"
+    manifest {
+        attributes 'Implementation-Title': artifactId, 'Implementation-Version': version
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleVersionToUse
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	baseName "$artifactId"
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	baseName "$artifactId"
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+defaultTasks 'wrapper', 'clean', 'build', 'check', 'assemble', 'install', 'javadoc'

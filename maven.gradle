@@ -1,0 +1,40 @@
+apply plugin: 'maven'
+
+uploadArchives {
+	repositories {
+    	mavenDeployer {
+      		beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+      		repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        		authentication(userName: ossrhUsername, password: ossrhPassword)
+      		}
+      		snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        		authentication(userName: ossrhUsername, password: ossrhPassword)
+      		}
+		    pom.project {
+	            name artifactId
+	            description projectDescription
+	            packaging 'jar'
+	            url "$scmRootUrl/$artifactId"
+	            licenses {
+	                license {
+	                    name licenseName
+	                    url licenseUrl
+	                }
+	            }
+	            developers {
+	            	developer {
+	            		name 'Danilo Pianini'
+	            		email 'danilo.pianini@gmail.com'
+	            		url 'http://www.danilopianini.org/'
+	            	}
+	            }
+	            scm {
+	            	url "$scmRootUrl/$artifactId"
+	            	connection "$scmType:$scmLogin/$scmRepoName"
+	            	developerConnection "$scmType:$scmLogin/$scmRepoName"
+	            }
+		    }
+    	}
+  	}
+}
+
