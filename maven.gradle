@@ -1,4 +1,10 @@
 apply plugin: 'maven'
+apply plugin: 'signing'
+
+signing {
+    sign configurations.archives
+}
+signArchives.onlyIf { Boolean.parseBoolean(signArchivesIsEnabled) }
 
 uploadArchives {
 	repositories {

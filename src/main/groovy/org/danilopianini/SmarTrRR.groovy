@@ -6,23 +6,14 @@ import org.gradle.api.artifacts.DependencyResolveDetails
 
 class SmarTrRR implements Plugin<Project> {
     void apply(Project project) {
+        project.extensions.create("substitutions", Substitutions)
         project.configurations.all {
             resolutionStrategy {
                 /*
                  * This super-fantastic code implements the Holy Grail in Gradle:
                  * it restricts the version ranges transitively.
                  */
-                def substitutions = [
-                    'asm:asm':[
-                        Integer.toString(Integer.MAX_VALUE),
-                        'org.ow2.asm:asm',
-                        '5.0.+'
-                    ],
-                    'com.google.guava:guava':[
-                        '14.0.1',
-                        'com.google.guava:guava-jdk5',
-                        '14.0.1']
-                ]
+                def substitutions = project.substitutions.substitutions
                 def depMap = [:]
                 eachDependency { DependencyResolveDetails details ->
                     /*
@@ -39,7 +30,7 @@ class SmarTrRR implements Plugin<Project> {
                         ]
                         if (higherVersion(version, reqversion, true)) {
                             version = conversion[2]
-                            println 'substititution: ' + depId + ':' + req.version + ' --> ' + conversion[1] + ':' + version
+                            println 'Substitution: ' + depId + ':' + req.version + ' --> ' + conversion[1] + ':' + version
                             depId = conversion[1]
                             def substitution = depId + ':' + version
                             details.useTarget(substitution)
@@ -62,7 +53,7 @@ class SmarTrRR implements Plugin<Project> {
                         def newVersion = req.version
                         if(!(previousVersion == newVersion)) {
                             def selectedVersion = resolveConflict(previousVersion, newVersion)
-                            println 'range intersection: ' + depId + ' ' + previousVersion + ' <> ' + newVersion + ' --> ' + selectedVersion
+                            println 'Range intersection: ' + depId + ' ' + previousVersion + ' <> ' + newVersion + ' --> ' + selectedVersion
                             detailsList.each { det ->
                                 det.useVersion(selectedVersion)
                             }
@@ -75,32 +66,35 @@ class SmarTrRR implements Plugin<Project> {
         }
     }
 
-    def splitRange(def version) {
+    def splitRange(String version) {
         return version.replace(' ','').split(',')
     }
-    def minVersion(def version) {
+    def minVersion(String version) {
         def versions = splitRange(version)
         if (versions.length > 1) {
             return versions[0].substring(1)
         }
         return versions[0]
     }
-    def maxVersion(def version) {
+    def maxVersion(String version) {
         def versions = splitRange(version)
         if (versions.length > 1) {
             return versions[1].substring(0, versions[1].length() - 1)
         }
         return versions[0]
     }
-    def minInclusive(def version) {
+    def minInclusive(String version) {
         return !version.startsWith('(') && !version.startsWith(']')
     }
-    def maxInclusive(def version) {
+    def maxInclusive(String version) {
         return !version.endsWith(')') && !version.endsWith('[')
     }
-    def convertToNumber(def n) {
+    def convertToNumber(String n) {
+        if(n.isEmpty() || n.equals('+')) {
+            return Long.MAX_VALUE
+        }
         try {
-            return Integer.parseInt(n)
+            return Long.parseLong(n)
         } catch (NumberFormatException e) {
             return -1
         }
@@ -213,4 +207,19 @@ class SmarTrRR implements Plugin<Project> {
         }
         return (maxmin[1] ? '[' : '(') + maxmin[0] + ', ' + minmax[0] + (minmax[1] ? ']' : ')')
     }
+}
+
+class Substitutions {
+    def Map substitutions = [:]
+    
+    def substitute(def String origin) {
+        [up_to: { String maxVersion=Integer.toString(Integer.MAX_VALUE) ->
+            [with: { String destination ->
+                [at: { String newVersion = '+'
+                    substitutions.put(origin, [maxVersion, destination, newVersion])             
+                }]
+            }]
+        }]
+    }
+    
 }
