@@ -59,17 +59,4 @@ We use a three level numbering, following the model of [Semantic Versioning][Sem
 * **Update of the major number**: *non-backwards-compatible change*. If a change in interfaces, constructors, or public member of some class has happened, a new major number should be issued. This is also the case if the semantics of some method has changed. In general, if there is a high probability that projects depending upon this one may experience compile-time or run-time issues if they switch to the new version, then a new major number should be adopted. If the major version number is upgraded, the mid and minor numbers should be reset to 0.
 	* Example: switch from 1.2.3 to 2.0.0 after changing the interface for parsing programs.
 
-
-[Javadoc]: http://137.204.107.70/protelis-build/protelis/build/docs/javadoc/
-[Jars]: http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22protelis%22
-[reports]: https://drone.io/github.com/Protelis/Protelis/files/build/reports/reports.tar
-[dashboard]: http://137.204.107.70/protelis-build/protelis/build/reports/buildDashboard/
-[test]: http://137.204.107.70/protelis-build/protelis/build/reports/tests/
-[checkstyle]: http://137.204.107.70/protelis-build/protelis/build/reports/checkstyle/main.html
-[checkstyle-test]: http://137.204.107.70/protelis-build/protelis/build/reports/checkstyle/test.html
-[findbugs]: http://137.204.107.70/protelis-build/protelis/build/reports/findbugs/main.html
-[findbugs-test]: http://137.204.107.70/protelis-build/protelis/build/reports/findbugs/test.html
-[pmd]: http://137.204.107.70/protelis-build/protelis/build/reports/pmd/main.html
-[pmd-test]: http://137.204.107.70/protelis-build/protelis/build/reports/pmd/test.html
-[eclipse]: https://eclipse.org/downloads/
 [SemVer]: http://semver.org/spec/v2.0.0.html
