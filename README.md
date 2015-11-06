@@ -3,7 +3,9 @@
 
 A Smarter Transitive Dependency Range Resolver for Gradle
 
-## The Problem
+## Description
+
+### The problem
 
 Gradle by default resolves each dependency range, then works at resolving conflicts. This, however, may be a source of headaches.
 
@@ -21,7 +23,7 @@ You surely noticed that there is an overlap between ``[15.0,17.0]`` and ``[16.0,
 
 Unfortunately, Gradle has no built in mechanism to do so.
 
-## The Plugin
+### The solution
 
 This is where SmarTrRR (SMARter TRansitive Range Resolver) comes in to play. This script overrides the project's resolution strategy and behaves as follow:
 * Apply the substitutions (in case you want to rename some transitive dependencies and point them elsewhere, e.g. to translate ``com.google.guava:guava:14.0.1`` into ``com.google.guava:guava-jdk5:14.0.1``)
@@ -29,9 +31,40 @@ This is where SmarTrRR (SMARter TRansitive Range Resolver) comes in to play. Thi
 * In case of pointwise intersection (namely, a single version is compatible), pick such version
 * In case of actual version conflict, pick the highest lower-compatible version. For instance, if there is a conflict between ``[2.0, 3[`` and ``[3.0, 5[``, then ``3.0`` is selected. As another example, in case of conflict between ``1.2`` and ``1.3``, ``1.3`` is selected (this is similar to the default Gradle behavior).
 
-### Use the plugin
+## Use
 
-This section is under development
+### Use SmarTrRR to resolve transitive dependency ranges
+
+Very little effort is required to enable SmarTrRR in your Gradle build:
+
+```gradle
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.danilopianini:smartrrr:0.0.0'
+    }
+}
+apply plugin: 'org.danilopianini.smartrrr'
+```
+
+That's it: the plugin will be downloaded from Central, brought in into your build classpath, and used for dependency resolution. Yay!
+
+### Configure dependency substitutions
+
+Substitutions are used to point **all** the instances of some artifact *up to certain version* to another artifact, or to another version of the same one. A ``substitutions`` section in your ``build.gradle`` will do the job.
+
+Here is an example: 
+
+```gradle
+substitutions {
+	substitute 'asm:asm' up_to '6' with 'org.ow2.asm:asm' at '+'
+	substitute 'com.google.guava:guava' up_to '14.0.1' with 'com.google.guava:guava-jdk5' at '+'
+}
+```
+
+This configuration substitutes any artifact matching ``asm:asm:[0, 6]`` with ``org.ow2.asm:asm:+`` and any artifact matching ``com.google.guava:guava:[0, 14.0.1]``  with ``com.google.guava:guava-jdk5:+``
 
 ## Notes for Developers
 
