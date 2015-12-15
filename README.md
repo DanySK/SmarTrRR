@@ -43,7 +43,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.danilopianini:smartrrr:0.0.0'
+        classpath 'org.danilopianini:smartrrr:0.0.1'
     }
 }
 apply plugin: 'org.danilopianini.smartrrr'
