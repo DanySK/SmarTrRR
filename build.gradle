@@ -2,30 +2,39 @@ apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply from: 'maven.gradle'
 
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies { classpath "com.gradle.publish:plugin-publish-plugin:0.9.1" }
+}
+apply plugin: "com.gradle.plugin-publish"
+
 dependencies {
     compile gradleApi()
     compile localGroovy()
 }
 
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
 jar {
-	baseName "$artifactId"
+    baseName "$artifactId"
     manifest {
         attributes 'Implementation-Title': artifactId, 'Implementation-Version': version
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = gradleVersionToUse
-}
+task wrapper(type: Wrapper) { gradleVersion = gradleVersionToUse }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-	baseName "$artifactId"
+    baseName "$artifactId"
     classifier = 'sources'
     from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-	baseName "$artifactId"
+    baseName "$artifactId"
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
@@ -33,6 +42,20 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives sourcesJar
     archives javadocJar
+}
+
+pluginBundle {
+    website = 'https://github.com/DanySK/SmarTrRR'
+    vcsUrl = 'https://github.com/DanySK/SmarTrRR'
+    description = 'A Smarter Transitive Dependency Range Resolver for Gradle'
+    tags = ['transitive', 'dependencies', 'dependency', 'resolution', 'range']
+
+    plugins {
+        smartrrrPlugin {
+            id = 'org.danilopianini.smartrrr'
+            displayName = 'SmarTrRR'
+        }
+    }
 }
 
 defaultTasks 'wrapper', 'clean', 'build', 'check', 'assemble', 'install', 'javadoc'
