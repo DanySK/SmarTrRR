@@ -15,6 +15,9 @@ dependencies {
     compile localGroovy()
 }
 
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
 jar {
     baseName "$artifactId"
     manifest {
@@ -48,7 +51,7 @@ pluginBundle {
     tags = ['transitive', 'dependencies', 'dependency', 'resolution', 'range']
 
     plugins {
-        greetingsPlugin {
+        smartrrrPlugin {
             id = 'org.danilopianini.smartrrr'
             displayName = 'SmarTrRR'
         }
